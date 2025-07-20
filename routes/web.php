@@ -73,3 +73,8 @@ Route::post('/posts', function (\Illuminate\Http\Request $request) {
 
     return redirect('/dashboard')->with('success', 'Post berhasil diupload');
 })->middleware('check.token');
+
+Route::post('/posts/{id}/like', function ($id) {
+    $response = Http::withToken(session('token'))->post(url("http://localhost/instaapp_sevima/public/api/posts/$id/like"));
+    return back();
+})->middleware('check.token');

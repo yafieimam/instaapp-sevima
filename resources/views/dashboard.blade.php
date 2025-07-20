@@ -38,6 +38,24 @@
                         @if ($post['caption'])
                             <p>{{ $post['caption'] }}</p>
                         @endif
+                        <form method="POST" action="/posts/{{ $post['id'] }}/like">
+                            @csrf
+                            <button class="btn btn-sm btn-outline-primary">
+                                ❤️ Like
+                            </button>
+                        </form>
+                        @if ($post['user']['id'] == session('user.id'))
+                            @php
+                                $likeRes = Http::withToken(session('token'))->get(url('http://localhost/instaapp_sevima/public//api/posts/' . $post['id'] . '/likes'));
+                                $likers = $likeRes->ok() ? $likeRes->json() : [];
+                            @endphp
+                            <p class="text-muted mt-2">
+                                {{ $likers['count'] ?? 0 }} orang menyukai ini
+                                @if (!empty($likers['users']))
+                                    <br><small>Liked by: {{ implode(', ', $likers['users']) }}</small>
+                                @endif
+                            </p>
+                        @endif
                         <p class="text-muted mb-0">
                             Komentar {{ $post['allow_comment'] ? 'diizinkan' : 'dimatikan' }}
                         </p>
