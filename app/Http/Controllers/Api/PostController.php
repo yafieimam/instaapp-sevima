@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Post;
+use App\Models\User;
 
 class PostController extends Controller
 {
@@ -35,6 +36,21 @@ class PostController extends Controller
     public function index()
     {
         return Post::with('user')->latest()->get();
+    }
+
+    public function postsByUser($id)
+    {
+        $user = User::findOrFail($id);
+
+        $posts = Post::with(['user', 'likes', 'comments.user'])
+            ->where('user_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'user' => $user,
+            'posts' => $posts
+        ]);
     }
 
     public function update(Request $request, $id)

@@ -46,6 +46,18 @@ Route::get('/logout', function () {
     return redirect('/login');
 });
 
+Route::get('/profile/{id}', function ($id) {
+    $token = session('token');
+
+    $response = Http::withToken($token)->get(url("http://localhost/instaapp_sevima/public/api/user/posts/$id"));
+    $data = $response->json();
+    
+    return view('profile', [
+        'user' => $data['user'],
+        'posts' => $data['posts']
+    ]);
+})->middleware('check.token');
+
 Route::get('/posts/create', function () {
     return view('posts.create');
 })->middleware('check.token');

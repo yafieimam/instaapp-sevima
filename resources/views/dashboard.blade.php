@@ -11,8 +11,9 @@
     <body>
         <div class="container mt-4">
             <div class="d-flex justify-content-between mb-3">
-                <h3>Feed</h3>
+                <h3>Feed - {{ session('user.name') }}</h3>
                 <div>
+                    <a href="/profile/{{ session('user.id') }}" class="btn btn-primary">Profil Saya</a>
                     <a href="/posts/create" class="btn btn-success">+ Upload</a>
                     <a href="/logout" class="btn btn-danger">Logout</a>
                 </div>
