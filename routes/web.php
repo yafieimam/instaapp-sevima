@@ -51,10 +51,27 @@ Route::get('/profile/{id}', function ($id) {
 
     $response = Http::withToken($token)->get(url("http://localhost/instaapp_sevima/public/api/user/posts/$id"));
     $data = $response->json();
-    
+
     return view('profile', [
         'user' => $data['user'],
         'posts' => $data['posts']
+    ]);
+})->middleware('check.token');
+
+Route::get('/post/{id}', function ($id) {
+    $token = session('token');
+
+    $response = Http::withToken($token)->get(url("http://localhost/instaapp_sevima/public/api/post/$id"));
+
+    if ($response->failed()) {
+        abort(404);
+    }
+
+    $post = $response->json();
+
+    return view('post-detail', [
+        'post' => $post,
+        'user' => session('user'),
     ]);
 })->middleware('check.token');
 

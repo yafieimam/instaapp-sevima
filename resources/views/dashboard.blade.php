@@ -30,10 +30,12 @@
 
             @foreach ($posts as $post)
                 <div class="card post-card">
-                    <div class="card-header">
-                        <strong>{{ $post['user']['username'] }}</strong>
-                        <span class="text-muted float-end">{{ \Carbon\Carbon::parse($post['created_at'])->diffForHumans() }}</span>
-                    </div>
+                    <a href="/post/{{ $post['id'] }}">
+                        <div class="card-header">
+                            <strong>{{ $post['user']['username'] }}</strong>
+                            <span class="text-muted float-end">{{ \Carbon\Carbon::parse($post['created_at'])->diffForHumans() }}</span>
+                        </div>
+                    </a>
                     <div class="card-body">
                         <img src="{{ asset('storage/' . $post['image_path']) }}" class="post-image mb-3" />
                         @if ($post['caption'])
@@ -66,18 +68,9 @@
                                 ❤️ Like
                             </button>
                         </form>
-                        @if ($post['user']['id'] == session('user.id'))
-                            @php
-                                $likeRes = Http::withToken(session('token'))->get(url('http://localhost/instaapp_sevima/public//api/posts/' . $post['id'] . '/likes'));
-                                $likers = $likeRes->ok() ? $likeRes->json() : [];
-                            @endphp
-                            <p class="text-muted mt-2">
-                                {{ $likers['count'] ?? 0 }} orang menyukai ini
-                                @if (!empty($likers['users']))
-                                    <br><small>Liked by: {{ implode(', ', $likers['users']) }}</small>
-                                @endif
-                            </p>
-                        @endif
+                        <p class="text-muted mt-2">
+                            {{ count($post['likes']) }} orang menyukai ini
+                        </p>
                         @if ($post['allow_comment'])
                             <form method="POST" action="/posts/{{ $post['id'] }}/comments" class="mb-3">
                                 @csrf

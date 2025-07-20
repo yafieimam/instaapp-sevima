@@ -35,7 +35,14 @@ class PostController extends Controller
 
     public function index()
     {
-        return Post::with('user')->latest()->get();
+        return Post::with(['user', 'likes.user'])->latest()->get();
+    }
+
+    public function show($id)
+    {
+        $post = Post::with(['user', 'likes.user', 'comments.user'])->findOrFail($id);
+
+        return response()->json($post);
     }
 
     public function postsByUser($id)
