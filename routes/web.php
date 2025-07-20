@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
-use App\Http\Middleware\CheckToken;
-
-use App\Http\Controllers\Api\AuthController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,24 +34,6 @@ Route::post('/register', function (\Illuminate\Http\Request $request) {
     }
 
     session(['token' => $response['token'], 'user' => $response['user']]);
-    return redirect('/dashboard');
-});
-
-Route::post('/register', function (\Illuminate\Http\Request $request) {
-    $controller = new AuthController();
-    $response = $controller->register($request);
-
-    if ($response->getStatusCode() !== 200) {
-        return back()->withErrors(['email' => 'Gagal mendaftar. Coba lagi.']);
-    }
-
-    $data = $response->getData(true);
-
-    session([
-        'token' => $data['token'], 
-        'user' => $data['user']
-    ]);
-    
     return redirect('/dashboard');
 });
 
