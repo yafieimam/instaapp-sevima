@@ -66,3 +66,31 @@ Route::get('/logout', function () {
     session()->flush();
     return redirect('/login');
 });
+
+Route::get('/posts/create', function () {
+    return view('posts.create');
+})->middleware('check.token');
+
+Route::post('/posts', function (\Illuminate\Http\Request $request) {
+    $request->validate([
+        'image' => 'required|image',
+        'caption' => 'nullable|string',
+    ]);
+
+    $token = session('token');
+    $file = $request->file('image');
+    $filename = $file->getClientOriginalName();
+
+    $response = Http::attach(
+        'image', file_get_contents($file), $filename
+    )->withToken($token)->post(url('http://localhost/instaapp_sevima/public/api/posts'), [
+        'caption' => $request->caption,
+        'allow_comment' => $request->has('allow_comment'),
+    ]);
+
+    if ($response->failed()) {
+        return back()->withErrors(['msg' => 'Gagal upload post']);
+    }
+
+    return redirect('/dashboard')->with('success', 'Post berhasil diupload');
+})->middleware('check.token');
