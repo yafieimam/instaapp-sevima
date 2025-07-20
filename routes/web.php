@@ -78,3 +78,16 @@ Route::post('/posts/{id}/like', function ($id) {
     $response = Http::withToken(session('token'))->post(url("http://localhost/instaapp_sevima/public/api/posts/$id/like"));
     return back();
 })->middleware('check.token');
+
+Route::post('/posts/{id}/comments', function ($id, \Illuminate\Http\Request $request) {
+    $response = Http::withToken(session('token'))->post(url("http://localhost/instaapp_sevima/public/api/posts/$id/comments"), [
+        'content' => $request->content,
+    ]);
+
+    return back();
+})->middleware('check.token');
+
+Route::post('/comments/{id}/delete', function ($id) {
+    Http::withToken(session('token'))->delete(url("http://localhost/instaapp_sevima/public/api/comments/$id"));
+    return back();
+})->middleware('check.token');

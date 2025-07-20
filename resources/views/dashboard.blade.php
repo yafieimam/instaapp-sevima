@@ -56,9 +56,31 @@
                                 @endif
                             </p>
                         @endif
-                        <p class="text-muted mb-0">
-                            Komentar {{ $post['allow_comment'] ? 'diizinkan' : 'dimatikan' }}
-                        </p>
+                        @if ($post['allow_comment'])
+                            <form method="POST" action="/posts/{{ $post['id'] }}/comments" class="mb-3">
+                                @csrf
+                                <textarea name="content" class="form-control mb-2" rows="2" placeholder="Tulis komentar..." required></textarea>
+                                <button class="btn btn-sm btn-secondary">Kirim Komentar</button>
+                            </form>
+
+                            @php
+                                $commentRes = Http::withToken(session('token'))->get(url("http://localhost/instaapp_sevima/public/api/posts/{$post['id']}/comments"));
+                                $comments = $commentRes->ok() ? $commentRes->json() : [];
+                            @endphp
+
+                            @foreach ($comments as $comment)
+                                <div class="border rounded p-2 mb-2 bg-light">
+                                    <strong>{{ $comment['user']['username'] }}</strong>:
+                                    {{ $comment['content'] }}
+                                    @if ($comment['user']['id'] == session('user.id') || $post['user']['id'] == session('user.id'))
+                                        <form method="POST" action="/comments/{{ $comment['id'] }}/delete" style="display:inline">
+                                            @csrf
+                                            <button class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('Hapus komentar?')">hapus</button>
+                                        </form>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             @endforeach
