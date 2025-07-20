@@ -16,10 +16,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/posts', [PostController::class, 'store']);
     Route::get('/posts', [PostController::class, 'index']);
+    Route::put('/posts/{id}', [PostController::class, 'update']);
+    Route::delete('/posts/{id}', [PostController::class, 'destroy']);
 
     Route::post('/posts/{id}/like', [LikeController::class, 'toggleLike']);
     Route::get('/posts/{id}/likes', [LikeController::class, 'showLikes']);
-    
+
     Route::post('/posts/{id}/comments', [CommentController::class, 'store']);
     Route::get('/posts/{id}/comments', [CommentController::class, 'index']);
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);

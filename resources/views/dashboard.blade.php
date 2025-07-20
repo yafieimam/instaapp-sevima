@@ -38,6 +38,27 @@
                         @if ($post['caption'])
                             <p>{{ $post['caption'] }}</p>
                         @endif
+                        @if ($post['user']['id'] == session('user.id'))
+                            <div class="mb-2">
+                                <form method="POST" action="/posts/{{ $post['id'] }}/edit">
+                                    @csrf
+                                    <label>
+                                        Edit Caption
+                                    </label>
+                                    <textarea name="caption" class="form-control mb-1">{{ $post['caption'] }}</textarea>
+                                    <label>
+                                        <input type="checkbox" name="allow_comment" {{ $post['allow_comment'] ? 'checked' : '' }}>
+                                        Izinkan komentar
+                                    </label>
+                                    <button class="btn btn-sm btn-warning mt-1">Simpan Perubahan</button>
+                                </form>
+
+                                <form method="POST" action="/posts/{{ $post['id'] }}/delete" class="mt-2">
+                                    @csrf
+                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Hapus post ini?')">Hapus Post</button>
+                                </form>
+                            </div>
+                        @endif
                         <form method="POST" action="/posts/{{ $post['id'] }}/like">
                             @csrf
                             <button class="btn btn-sm btn-outline-primary">

@@ -74,6 +74,19 @@ Route::post('/posts', function (\Illuminate\Http\Request $request) {
     return redirect('/dashboard')->with('success', 'Post berhasil diupload');
 })->middleware('check.token');
 
+Route::post('/posts/{id}/delete', function ($id) {
+    Http::withToken(session('token'))->delete(url("http://localhost/instaapp_sevima/public/api/posts/$id"));
+    return back();
+})->middleware('check.token');
+
+Route::post('/posts/{id}/edit', function ($id, \Illuminate\Http\Request $request) {
+    Http::withToken(session('token'))->put(url("http://localhost/instaapp_sevima/public/api/posts/$id"), [
+        'caption' => $request->caption,
+        'allow_comment' => $request->has('allow_comment'),
+    ]);
+    return back();
+})->middleware('check.token');
+
 Route::post('/posts/{id}/like', function ($id) {
     $response = Http::withToken(session('token'))->post(url("http://localhost/instaapp_sevima/public/api/posts/$id/like"));
     return back();
