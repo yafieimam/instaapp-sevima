@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\Api\AuthController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,7 +14,7 @@ Route::get('/login', function () {
 
 Route::get('/register', function () {
     return view('auth.register');
-})->name('register');
+})->name('register.index');
 
 Route::post('/login', function (\Illuminate\Http\Request $request) {
     $response = Http::post(url('http://localhost/instaapp_sevima/public/api/login'), $request->only('email', 'password'));
@@ -33,7 +34,26 @@ Route::post('/register', function (\Illuminate\Http\Request $request) {
         return back()->withErrors(['email' => 'Gagal mendaftar. Coba lagi.']);
     }
 
+
     session(['token' => $response['token'], 'user' => $response['user']]);
+    return redirect('/dashboard');
+});
+
+Route::post('/register', function (\Illuminate\Http\Request $request) {
+    $controller = new AuthController();
+    $response = $controller->register($request);
+
+    if ($response->getStatusCode() !== 200) {
+        return back()->withErrors(['email' => 'Gagal mendaftar. Coba lagi.']);
+    }
+
+    $data = $response->getData(true);
+
+    session([
+        'token' => $data['token'], 
+        'user' => $data['user']
+    ]);
+    
     return redirect('/dashboard');
 });
 
